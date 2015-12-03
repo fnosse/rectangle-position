@@ -25,8 +25,8 @@ def find_hull(img,thresh):
     cv2.drawContours(img,[max_elem[1]],0,(0,255,0),30)
     hull = []
     for d in max_elem[1]:
-        #hull.append(d[0][0],d[0][1])
-        hull.append(d[0])
+        hull.append([d[0][0],d[0][1]])
+        #hull.append(d[0])
     return hull,img
 
 img = cv2.imread('laptop.jpeg')
@@ -56,17 +56,24 @@ hull_start_top = hull #corners.corners(hull) # hull[1:] + hull[:1]
 print('hull_start_top{0}'.format(hull_start_top))
 
 #[x[0],x[1],0]
-hull3d = [[x[0],x[1],0] for x in hull_start_top]
-print('hull3d'.format(hull3d))
+hull3d = []
+for e in hull_start_top:
+    print('loop{0}, {1}'.format(e[0], e[1]))
+    hull3d.append(np.array([e[0],e[1],0], np.float64))
+hull3d = hull3d
 
+print('hull3d{0}'.format(hull3d))
+
+#world_coords = np.array([np.array([-1600.,-900.]), np.array([1600.,-900.]),
+#                         np.array([1600.,900.]),   np.array([-1600.,900.])])
 world_coords = np.array([[-1600.,-900.], [1600.,-900.],
-                         [1600.,900.],   [-1600.,900.]], np.float64)
+                         [1600.,900.],  [-1600.,900.]])
 
-pixel_coords = np.array(hull,np.float64)
+pixel_coords = hull3d #np.array(hull,np.float64)
 
-print(distortion_coefficients)
+print('distcoeff={0}'.format(distortion_coefficients))
 
-#retval,rvec,tvec = cv2.solvePnP(world_coords, pixel_coords, camera_matrix, distortion_coefficients)
+retval,rvec,tvec = cv2.solvePnP(world_coords, pixel_coords, camera_matrix, distortion_coefficients)
 #print("retval{0},rvec{1},tvec{2}".format(retval,rvec,tvec))
 
 # plot all the images and their histograms
