@@ -59,22 +59,31 @@ print('hull_start_top{0}'.format(hull_start_top))
 hull3d = []
 for e in hull_start_top:
     print('loop{0}, {1}'.format(e[0], e[1]))
-    hull3d.append(np.array([e[0],e[1],0], np.float64))
-hull3d = hull3d
+    hull3d.append([e[0],e[1],0])
+print('hull3d{0}'.format(hull3d))
+hull3d = np.array(hull3d, np.float64)
 
 print('hull3d{0}'.format(hull3d))
 
 #world_coords = np.array([np.array([-1600.,-900.]), np.array([1600.,-900.]),
 #                         np.array([1600.,900.]),   np.array([-1600.,900.])])
 world_coords = np.array([[-1600.,-900.], [1600.,-900.],
-                         [1600.,900.],  [-1600.,900.]])
+                         [1600.,900.],  [-1600.,900.]], np.float64)
 
 pixel_coords = hull3d #np.array(hull,np.float64)
 
 print('distcoeff={0}'.format(distortion_coefficients))
 
-retval,rvec,tvec = cv2.solvePnP(world_coords, pixel_coords, camera_matrix, distortion_coefficients)
-#print("retval{0},rvec{1},tvec{2}".format(retval,rvec,tvec))
+retval,rvec,tvec = cv2.solvePnP(pixel_coords, world_coords, camera_matrix, distortion_coefficients)
+print("retval{0},rvec{1},tvec{2}".format(retval,rvec,tvec))
+
+rotation_matrix,jac = cv2.Rodrigues(rvec.transpose())
+print('rotation_matrix{0}'.format(rotation_matrix))
+camera_rotation_vector,jac = cv2.Rodrigues(rotation_matrix.transpose())
+print('camera_rotation_vector{0}'.format(camera_rotation_vector))
+camera_translation_vector = -rotation_matrix.transpose()*np.matrix(tvec)
+
+print('camera_translation_vector={0}'.format(camera_translation_vector))
 
 # plot all the images and their histograms
 images = [img, 0, thresh,
