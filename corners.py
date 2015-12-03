@@ -1,8 +1,8 @@
 import numpy as np
 
 def corners(corner_list):
-	a = np.array(corner_list)
-	
+#	a = np.array(corner_list)
+	a = corner_list
 	ind = np.lexsort((a[:,1], a[:,0]))
 	
 	b = a[ind].tolist()
@@ -25,4 +25,4 @@ def corners(corner_list):
 	
 	return result
 	
-print corners([[465, 159], [443, 488], [65, 437], [102, 212]])
+#print corners([[465, 159], [443, 488], [65, 437], [102, 212]])
