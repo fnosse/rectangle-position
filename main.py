@@ -22,7 +22,7 @@ def find_hull(img,thresh):
     max_elem = max(hulls, key=lambda h: cv2.contourArea(h[0]))
     print(max_elem[1])
     cv2.drawContours(img,[max_elem[1]],0,(0,255,0),30)
-    return None,img
+    return max_elem[1],img
 
 img = cv2.imread('../laptop.jpeg')
 
@@ -40,6 +40,14 @@ canny = cv2.Canny(img, 10, 200)
 ret1,thresh = cv2.threshold(gray,100,255,cv2.THRESH_BINARY)
 
 hull,hull_img = find_hull(img,thresh)
+
+camera_matrix = [[  2.85718343e+03,   0.00000000e+00,   1.63754626e+03],
+                 [  0.00000000e+00,   2.86448210e+03,   1.21382910e+03],
+                 [  0.00000000e+00,   0.00000000e+00,   1.00000000e+00]]
+distortion_coefficients = [  5.07668186e-02,   2.31285979e-01,  -3.40214009e-04,  -6.56692742e-04,  -1.08762549e+00]
+
+pixel_coords = hull.copy()
+
 
 # plot all the images and their histograms
 images = [img, 0, thresh,
