@@ -41,13 +41,23 @@ ret1,thresh = cv2.threshold(gray,100,255,cv2.THRESH_BINARY)
 
 hull,hull_img = find_hull(img,thresh)
 
-camera_matrix = [[  2.85718343e+03,   0.00000000e+00,   1.63754626e+03],
+camera_matrix = np.array([[  2.85718343e+03,   0.00000000e+00,   1.63754626e+03],
                  [  0.00000000e+00,   2.86448210e+03,   1.21382910e+03],
-                 [  0.00000000e+00,   0.00000000e+00,   1.00000000e+00]]
-distortion_coefficients = [  5.07668186e-02,   2.31285979e-01,  -3.40214009e-04,  -6.56692742e-04,  -1.08762549e+00]
+                 [  0.00000000e+00,   0.00000000e+00,   1.00000000e+00]])
+distortion_coefficients = np.array([  5.07668186e-02,   2.31285979e-01,  -3.40214009e-04,  -6.56692742e-04,  -1.08762549e+00], np.float64)
 
-pixel_coords = hull.copy()
+hull_start_top = hull[1::] + hull[:1:]
 
+
+world_coords = np.array([[-1600.,-900.], [1600.,-900.],
+                         [1600.,900.],   [-1600.,900.]], np.float64)
+
+pixel_coords = np.array(hull.copy(),np.float64)
+
+print(distortion_coefficients)
+
+retval,rvec,tvec = cv2.solvePnP(world_coords, pixel_coords, camera_matrix, distortion_coefficients)
+print("retval{0},rvec{1},tvec{2}".format(retval,rvec,tvec))
 
 # plot all the images and their histograms
 images = [img, 0, thresh,
