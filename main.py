@@ -62,14 +62,20 @@ def handle_frame(img, plot_graph):
         print('loop{0}, {1}'.format(e[0], e[1]))
         hull3d.append([e[0],e[1],0])
     print('hull3d{0}'.format(hull3d))
-    hull3d = np.array(hull3d, np.float64)
+    hull3d = np.array(hull3d, np.float32)
+    print('hull3d{0}'.format(hull3d))
 
+    hull2d = np.array(hull, np.float32)
+    screen_coords = np.array([[0,0], [3200,0], [3200,1800], [0,1800]], np.float32)
+    transformation_matrix = cv2.getPerspectiveTransform(hull2d, screen_coords)#screen_coords)
+    img_per_corr = cv2.warpPerspective(img,transformation_matrix,(1600,900))
+    
     print('hull3d{0}'.format(hull3d))
 
     #world_coords = np.array([np.array([-1600.,-900.]), np.array([1600.,-900.]),
     #                         np.array([1600.,900.]),   np.array([-1600.,900.])])
     world_coords = np.array([[-1600.,-900.], [1600.,-900.],
-                             [1600.,900.],  [-1600.,900.]], np.float64)
+                             [1600.,900.],  [-1600.,900.]], np.float32)
     
     pixel_coords = hull3d #np.array(hull,np.float64)
     
@@ -90,10 +96,11 @@ def handle_frame(img, plot_graph):
         # plot all the images and their histograms
         images = [img, 0, thresh,
                   hull_img,
-                  canny
+                  canny,
+                  img_per_corr,
               ]
         
-        titles = ['Original Noisy Image','Histogram','Global Thresholding (v=127)','Hull', 'Canny']
+        titles = ['Original Noisy Image','Histogram','Global Thresholding (v=127)','Hull', 'Canny', 'Perspective']
         
         i=0
         #for i in range(0, len(images):
@@ -116,11 +123,15 @@ def handle_frame(img, plot_graph):
         plt.subplot(3,3,1+i),plt.imshow(images[i],'gray')
         plt.title(titles[i]), plt.xticks([]), plt.yticks([])
         i = i+1
+
+        plt.subplot(3,3,1+i),plt.imshow(images[i],'gray')
+        plt.title(titles[i]), plt.xticks([]), plt.yticks([])
+        i = i+1
         
         plt.show()
     return (tvec,camera_translation_vector)
 
-if False:
+if True:
     img = cv2.imread('laptop.jpeg')
     handle_frame(img, True)
 else:
