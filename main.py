@@ -32,7 +32,7 @@ def find_hull(img,thresh):
     return hull,img
 
 def handle_frame(img, plot_graph):
-    img = cv2.resize(img, (0,0), fx=0.25, fy=0.25)
+    #img = cv2.resize(img, (0,0), fx=0.25, fy=0.25)
     
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
@@ -53,7 +53,7 @@ def handle_frame(img, plot_graph):
     distortion_coefficients = np.array([  5.07668186e-02,   2.31285979e-01,  -3.40214009e-04,  -6.56692742e-04,  -1.08762549e+00], np.float64)
 
     print('hull{0}'.format(hull))
-    hull_start_top = hull #corners.corners(hull) # hull[1:] + hull[:1]
+    hull_start_top = corners.corners(hull) # hull[1:] + hull[:1]
     print('hull_start_top{0}'.format(hull_start_top))
 
     #[x[0],x[1],0]
@@ -65,8 +65,8 @@ def handle_frame(img, plot_graph):
     hull3d = np.array(hull3d, np.float32)
     print('hull3d{0}'.format(hull3d))
 
-    hull2d = np.array(hull, np.float32)
-    screen_coords = np.array([[0,0], [3200,0], [3200,1800], [0,1800]], np.float32)
+    hull2d = np.array(hull_start_top, np.float32)
+    screen_coords = np.array([[0,0], [1600,0], [1600,900], [0,900]], np.float32)
     transformation_matrix = cv2.getPerspectiveTransform(hull2d, screen_coords)#screen_coords)
     img_per_corr = cv2.warpPerspective(img,transformation_matrix,(1600,900))
     
