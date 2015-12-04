@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import corners
-
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.cm as cm
 #def to_binary_img(img):
 
 def find_hull(img,thresh):
@@ -116,6 +118,38 @@ def handle_frame(img, plot_graph):
         i = i+1
         
         plt.show()
+    return (tvec,camera_translation_vector)
 
-img = cv2.imread('laptop.jpeg')
-handle_frame(img, True)
+if False:
+    img = cv2.imread('laptop.jpeg')
+    handle_frame(img, True)
+else:
+    cap = cv2.VideoCapture("IMG_1832.MOV")
+
+    cmap = cm.jet
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    cnt = 0
+    points = []
+    while cap.isOpened():
+        flag, frame = cap.read()
+        tvec,ctv = handle_frame(frame, False)
+        norm = np.linalg.norm(ctv)
+        print('ctv len{0}'.format(norm))
+        if norm>10000: #ctv[2] > 0:
+            continue
+        ax.scatter(*ctv, cmap=cmap)
+        #points.append([ctv[0][0], ctv[1][0], ctv[2][0]])
+        #points.append(np.asarray(1).reshape((1,-1)))
+        point = np.array(ctv.transpose())[0].tolist()
+
+        #if len(points)>0 and points
+        points.append(point)
+        cnt = cnt + 1
+        if cnt > 400:
+            break
+    print(points)
+    #ax.plot(points[,1], points[,2], points[,3])
+    x,y,z = zip(*points)
+    #ax.scatter(x,y,z)
+    plt.show()
